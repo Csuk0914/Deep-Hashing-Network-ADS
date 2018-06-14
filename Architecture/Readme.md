@@ -1,0 +1,1 @@
+# place the "bvlc_alexnet.npy" here as the default dir

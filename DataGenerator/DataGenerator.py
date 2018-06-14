@@ -1,18 +1,14 @@
+# This file is for data generate
+
 import numpy as np
 import cv2
 import os
 
-'''
-image data generator
-'''
-
+# 输入trainpath为文件保存路径， horizontal_flip决定是否有0.5的概率将图片反转。shuffle决定是否要随即打乱
 class ImageDataGenerator:
     def __init__(self, train_path, horizontal_flip=False, shuffle=False,
                  mean = np.array([104., 117., 124.]), scale_size=(227, 227)):
-
-        # Init params
         self.horizontal_flip = horizontal_flip
-        # self.n_classes = nb_classes # 类数量在读入过程中获取
         self.shuffle = shuffle
         self.mean = mean
         self.scaleSize = scale_size
@@ -40,22 +36,19 @@ class ImageDataGenerator:
             if not os.path.isfile(path):
                 continue
             prefix, suffix = os.path.splitext(filename)
-            # print(prefix)
+
             label = prefix.split('_')[0]
             self.images.append(filename)
 
             if not classTable.__contains__(label):
                 classTable[label] = tempClassNum
                 tempClassNum += 1
-            # self.labels.append(classTable[label])
+
             self.labels.append(classTable[label])
 
         self.dataSize = len(self.images)
         self.n_classes = tempClassNum
-
-        # print(tempClassNum)
-        # for i in self.labels:
-        #     print(i)
+        return
 
     def shuffle_data(self):
         # random the input data
@@ -75,24 +68,21 @@ class ImageDataGenerator:
             self.shuffle_data()
 
     def next_batch(self, batch_size):
-        # read the next batch_size of images to memory
+        # 将images中的名称读入下一个batch
         images = np.ndarray([batch_size, self.scaleSize[0], self.scaleSize[1], 3])
 
         for i in range(0,batch_size):
-            # print(self.images[self.index + i])
-            # print(self.images[self.index + i])
-            # img = cv2.imread(self.images[self.index + i])
             img = cv2.imread('./' + self.trainPath + '/' + self.images[self.index + i])
 
             # 水平翻转
             if self.horizontal_flip and np.random.random() < 0.5:
                 img = cv2.flip(img, 1)
 
-            # rescale
+            # 缩放尺寸
             img = cv2.resize(img, (self.scaleSize[0], self.scaleSize[1]))
             img = img.astype(np.float32)
 
-            # subtract mean
+            # 减去平均值
             img -= self.mean
 
             images[i] = img
@@ -100,11 +90,8 @@ class ImageDataGenerator:
         #构建类别
         oneHotLabels = np.zeros((batch_size, self.n_classes))
         for i in range(0,batch_size):
-            oneHotLabels[i][self.labels[i + self.index]] = 1
+            oneHotLabels[i][self.labels[i + self.index]] = 1.0
 
         self.index += batch_size
 
         return images, oneHotLabels
-
-# st = input('input train path: ')
-# im = ImageDataGenerator(st)
