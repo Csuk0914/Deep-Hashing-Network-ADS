@@ -10,4 +10,4 @@ The idea is from "Deep Hashing Network for Efficient Similarity Retrieval" (AAAI
 
 The origin source code is in [thuml-hash-caffe](https://github.com/thuml/hash-caffe)
 
-*implementation of the AlexNet and DeepHashNet are in Architecture folder *
+*implementation of the AlexNet and DeepHashNet are in Architecture folder*
